@@ -1,0 +1,5 @@
+node_modules/
+dist/
+.course/
+*.log
+.DS_Store
