@@ -1,6 +1,4 @@
 import { globby } from "globby";
-import ignore from "ignore";
-import type { Ignore } from "ignore";
 import { readFileSync, existsSync } from "node:fs";
 import { join, relative } from "node:path";
 
@@ -34,22 +32,14 @@ export interface WorkspaceTree {
   directories: string[];
 }
 
-const createIgnore = (
-  typeof ignore === "function"
-    ? ignore
-    : (ignore as unknown as { default: unknown }).default
-) as () => Ignore;
-
 function loadIgnorePatterns(root: string): string[] {
   const patterns: string[] = [...DEFAULT_EXCLUDES];
-  const ig = createIgnore();
 
   for (const name of [".gitignore", ".courseignore"]) {
     const p = join(root, name);
     if (existsSync(p)) {
       try {
         const content = readFileSync(p, "utf-8");
-        ig.add(content);
         // Also collect raw lines for globby negative patterns
         for (const line of content.split("\n")) {
           const trimmed = line.trim();

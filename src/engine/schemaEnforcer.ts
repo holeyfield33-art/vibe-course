@@ -28,13 +28,13 @@ function extractJson(raw: string): string {
  */
 export async function enforceSchema<T>(
   raw: string,
-  schema: z.ZodTypeAny,
+  schema: z.ZodType<T>,
   repairContext?: { system: string; originalUser: string }
 ): Promise<T> {
   const attempt = (text: string): T => {
     const jsonStr = extractJson(text);
     const parsed: unknown = JSON.parse(jsonStr);
-    return schema.parse(parsed) as T;
+    return schema.parse(parsed);
   };
 
   try {
@@ -77,12 +77,12 @@ export async function enforceCourseBlueprint(
   raw: string,
   repairContext: { system: string; originalUser: string }
 ): Promise<CourseBlueprint> {
-  return enforceSchema<CourseBlueprint>(raw, CourseBlueprintSchema, repairContext);
+  return enforceSchema(raw, CourseBlueprintSchema, repairContext);
 }
 
 export async function enforceLessonContent(
   raw: string,
   repairContext: { system: string; originalUser: string }
 ): Promise<LessonContent> {
-  return enforceSchema<LessonContent>(raw, LessonContentSchema, repairContext);
+  return enforceSchema(raw, LessonContentSchema, repairContext) as Promise<LessonContent>;
 }
