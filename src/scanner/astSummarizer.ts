@@ -1,16 +1,15 @@
 import { parse } from "@babel/parser";
-import _traverse from "@babel/traverse";
-import type { NodePath, TraverseOptions } from "@babel/traverse";
+import traverseModule, { type NodePath } from "@babel/traverse";
 import * as t from "@babel/types";
 import { readFileSync } from "node:fs";
 import type { ScannedFile } from "./treeScanner.js";
 
-// Handle both CJS default export and ESM interop
+type TraverseFn = (parent: t.Node, opts: Record<string, unknown>) => void;
 const traverse = (
-  typeof _traverse === "function"
-    ? _traverse
-    : (_traverse as unknown as { default: unknown }).default
-) as (parent: t.Node, options: TraverseOptions) => void;
+  typeof traverseModule === "function"
+    ? traverseModule
+    : (traverseModule as unknown as { default: TraverseFn }).default
+) as TraverseFn;
 
 export interface SignatureSummary {
   relativePath: string;
@@ -165,7 +164,7 @@ export function summarizeFile(file: ScannedFile): SignatureSummary | null {
   const types: string[] = [];
 
   traverse(ast, {
-    ExportNamedDeclaration(path) {
+    ExportNamedDeclaration(path: NodePath<t.ExportNamedDeclaration>) {
       const decl = path.node.declaration;
       if (!decl) {
         for (const spec of path.node.specifiers) {
@@ -207,7 +206,7 @@ export function summarizeFile(file: ScannedFile): SignatureSummary | null {
         }
       }
     },
-    ExportDefaultDeclaration(path) {
+    ExportDefaultDeclaration(path: NodePath<t.ExportDefaultDeclaration>) {
       const decl = path.node.declaration;
       if (t.isFunctionDeclaration(decl) || t.isFunctionExpression(decl)) {
         functions.push("export default function");
@@ -217,19 +216,19 @@ export function summarizeFile(file: ScannedFile): SignatureSummary | null {
         exports.push("export default …");
       }
     },
-    TSInterfaceDeclaration(path) {
+    TSInterfaceDeclaration(path: NodePath<t.TSInterfaceDeclaration>) {
       // Non-exported interfaces still useful for understanding
       if (!path.parentPath?.isExportNamedDeclaration()) {
         const name = path.node.id.name;
         interfaces.push(`interface ${name}`);
       }
     },
-    ClassDeclaration(path) {
+    ClassDeclaration(path: NodePath<t.ClassDeclaration>) {
       if (!path.parentPath?.isExportNamedDeclaration() && path.node.id) {
         classes.push(`class ${path.node.id.name}`);
       }
     },
-    FunctionDeclaration(path) {
+    FunctionDeclaration(path: NodePath<t.FunctionDeclaration>) {
       if (!path.parentPath?.isExportNamedDeclaration() && path.node.id) {
         // Only top-level non-exported for context
         if (path.parentPath?.isProgram()) {

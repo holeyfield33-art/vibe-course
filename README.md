@@ -2,7 +2,7 @@
 
 **Zero-config CLI that turns any local repository into a structured, interactive end-to-end course for developers.**
 
-Focuses on core domain logic, architectural trade-offs, state management, and business outcomes — not boilerplate.
+Focuses on core domain logic, architectural trade-offs, state management, and business outcomes â€” not boilerplate.
 
 ## Requirements
 
@@ -36,9 +36,9 @@ vibe-course init
 
 | Command | Description |
 |---------|-------------|
-| `vibe-course init` | Scan workspace → AST summaries → LLM course blueprint → `.course/manifest.json` |
+| `vibe-course init` | Scan workspace â†’ AST summaries â†’ LLM course blueprint â†’ `.course/manifest.json` |
 | `vibe-course module <id>` | Generate lesson Markdown, Mermaid diagrams, Break & Fix exercise, and quiz checkpoint |
-| `vibe-course ui` | Interactive Ink TUI — browse modules, read lessons, run exercises & quizzes |
+| `vibe-course ui` | Interactive Ink TUI â€” browse modules, read lessons, run exercises & quizzes |
 
 ## How it works
 
@@ -52,15 +52,15 @@ vibe-course init
 
 ```
 vibe-course/
-├── bin/index.ts
-├── src/
-│   ├── commands/     # init, module, ui
-│   ├── scanner/      # tree, AST, budget
-│   ├── engine/       # LLM client, prompts, Zod enforcement
-│   ├── storage/      # .course/manifest.json
-│   └── ui/           # Ink TUI
-├── package.json
-└── tsconfig.json
+â”œâ”€â”€ bin/index.ts
+â”œâ”€â”€ src/
+â”‚   â”œâ”€â”€ commands/     # init, module, ui
+â”‚   â”œâ”€â”€ scanner/      # tree, AST, budget
+â”‚   â”œâ”€â”€ engine/       # LLM client, prompts, Zod enforcement
+â”‚   â”œâ”€â”€ storage/      # .course/manifest.json
+â”‚   â””â”€â”€ ui/           # Ink TUI
+â”œâ”€â”€ package.json
+â””â”€â”€ tsconfig.json
 ```
 
 ## License
