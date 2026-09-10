@@ -2,7 +2,7 @@
 
 **Zero-config CLI that turns any local repository into a structured, interactive end-to-end course for developers.**
 
-Focuses on core domain logic, architectural trade-offs, state management, and business outcomes â€” not boilerplate.
+Focuses on core domain logic, architectural trade-offs, state management, and business outcomes — not boilerplate.
 
 ## Requirements
 
@@ -36,7 +36,7 @@ vibe-course init
 
 | Command | Description |
 |---------|-------------|
-| `vibe-course init` | Scan workspace â†’ AST summaries â†’ LLM course blueprint â†’ `.course/manifest.json` |
+| `vibe-course init` | Scan workspace → AST summaries → LLM course blueprint → `.course/manifest.json` |
 | `vibe-course module <id>` | Generate lesson Markdown, Mermaid diagrams, Break & Fix exercise, and quiz checkpoint |
 | `vibe-course ui` | Interactive Ink TUI â€” browse modules, read lessons, run exercises & quizzes |
 
@@ -52,16 +52,38 @@ vibe-course init
 
 ```
 vibe-course/
-â”œâ”€â”€ bin/index.ts
-â”œâ”€â”€ src/
-â”‚   â”œâ”€â”€ commands/     # init, module, ui
-â”‚   â”œâ”€â”€ scanner/      # tree, AST, budget
-â”‚   â”œâ”€â”€ engine/       # LLM client, prompts, Zod enforcement
-â”‚   â”œâ”€â”€ storage/      # .course/manifest.json
-â”‚   â””â”€â”€ ui/           # Ink TUI
-â”œâ”€â”€ package.json
-â””â”€â”€ tsconfig.json
+├── bin/index.ts
+├── src/
+│   ├── commands/     # init, module, ui
+│   ├── scanner/      # tree, AST, budget
+│   ├── engine/       # LLM client, prompts, Zod enforcement
+│   ├── storage/      # .course/manifest.json
+│   └── ui/           # Ink TUI
+├── package.json
+└── tsconfig.json
 ```
+
+## Ollama configuration
+
+- `OLLAMA_HOST` accepts a bare host (`127.0.0.1:11434`) or a full URL; `http://`
+  is added automatically if no scheme is present.
+- `OLLAMA_TIMEOUT_MS` (default 15 minutes) controls both the request and
+  headers/body timeout used for local-model calls — raise it for slower models
+  or larger prompts.
+
+## Known limitations
+
+- `vibe-course init` reads its skill-level/goals prompts interactively; run
+  with a non-TTY stdin (piped or redirected) and it exits silently without
+  generating a course, rather than erroring or accepting flags. There is
+  currently no non-interactive flag — script around it by calling the
+  scan → summarize → blueprint pipeline directly if you need to automate `init`.
+- No automated test suite yet. Treat schema/pipeline changes as unverified
+  until this is added.
+- Course quality depends heavily on the model behind it: small local Ollama
+  models (e.g. 1.5B) can complete the pipeline and pass schema validation but
+  tend to produce generic, low-detail course content. A capable hosted model
+  (OpenAI/Anthropic) or a larger local model is recommended for real use.
 
 ## License
 
